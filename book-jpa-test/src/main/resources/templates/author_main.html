@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>저자관리 페이지</title>
+    <script>
+        window.onload = () => {
+            document.getElementById("btn_search").addEventListener("click", () => {
+                let search = document.getElementById("search").value;
+                fetch('/authors/search?txt=' + search, { method: 'GET' })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        let result = document.querySelector(".result");
+                        result.innerHTML = "";
+                        data.forEach(function (author) {
+                            let tr = document.createElement("tr");
+                            let td1 = document.createElement("td");
+                            let td2 = document.createElement("td");
+                            let td3 = document.createElement("td");
+                            let td4 = document.createElement("td");
+
+
+                            td1.innerHTML = '<input type="text" value="' + author.authorCode + '">';
+                            td2.innerHTML = '<input type="text" value="' + author.authorName + '">';
+                            td3.innerHTML = '<button class="btnUpdate">수정</button>';
+                            td4.innerHTML = '<button class="btnDelete">삭제</button>';
+
+                            tr.appendChild(td1);
+                            tr.appendChild(td2);
+                            tr.appendChild(td3);
+                            tr.appendChild(td4);
+                            result.appendChild(tr);
+                        });
+                        document.querySelectorAll(".btnUpdate").forEach((btn) => {
+                            btn.addEventListener("click", eventUpdate);
+                        });
+
+                        document.querySelectorAll(".btnDelete").forEach((btn) => {
+                            btn.addEventListener("click", eventDelete);
+                        });
+                    });
+
+            });
+
+            document.getElementById("btn_insert").addEventListener("click", eventInsert);
+
+            document.querySelectorAll(".btnUpdate").forEach((btn) => {
+                btn.addEventListener("click", eventUpdate);
+            });
+
+            document.querySelectorAll(".btnDelete").forEach((btn) => {
+                btn.addEventListener("click", eventDelete);
+            });
+
+
+        }
+        function eventInsert(){
+            //등록 버튼 클릭시 등록 처리
+            fetch('/authors/new', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    authorCode: document.getElementById("authorCode").value,
+                    authorName: document.getElementById("authorName").value
+                })
+            }).then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.result === "success") {
+                        alert("등록되었습니다.");
+                    } else {
+                        alert("등록에 실패했습니다.");
+                    }
+                });
+        }
+
+        function eventUpdate(e){
+            //수정 버튼 클릭시 업데이트 처리
+            fetch('/authors/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    authorCode: e.target.parentElement.parentElement.children[0].children[0].value,
+                    authorName: e.target.parentElement.parentElement.children[1].children[0].value
+                })
+            }).then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.result === "success") {
+                        alert("수정되었습니다.");
+                    } else {
+                        alert("수정에 실패했습니다.");
+                    }
+                });
+
+
+        }
+
+        function eventDelete(e){
+            fetch('/authors/delete/'+ e.target.parentElement.parentElement.children[0].children[0].value, {
+                method: 'DELETE'
+            }).then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.result === "success") {
+                        alert("삭제되었습니다.");
+                    } else {
+                        alert("삭제에 실패했습니다.");
+                    }
+                });
+        }
+    </script>
+</head>
+<body>
+<h2>저자관리 페이지</h2>
+<hr>
+<a href="/books">도서 목록</a>
+<a href="/books/new">도서 등록</a>
+<a href="/authors">저자 목록</a>
+<a href="/publishers">출판사 목록</a>
+<hr>
+<!--검색-->
+<!--검색 결과 출력 부분, 수정 삭제가 가능하게끔 텍스트 상자에 출력-->
+<table border="1">
+    <thead>
+    <tr>
+        <th colspan="4">
+            <input type="text" id="search" placeholder="검색어">
+            <button type="button" id="btn_search">검색</button>
+        </th>
+    </tr>
+    <tr>
+        <th colspan="4">
+            <!-- 저자 등록 폼 -->
+            <input type="text" id="authorCode">
+            <input type="text" id="authorName">
+            <button type="button" id="btn_insert">등록</button>
+        </th>
+    </tr>
+    <tr>
+        <th>번호</th>
+        <th>저자명</th>
+        <th>수정</th>
+        <th>삭제</th>
+    </tr>
+    </thead>
+    <tbody class="result">
+    <tr th:each="author : ${authors}">
+        <td><input type="text" th:value="${author.authorCode}"></td>
+        <td><input type="text" th:value="${author.authorName}"></td>
+        <td>
+            <button class="btnUpdate">수정</button>
+        </td>
+        <td>
+            <button class="btnDelete">삭제</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

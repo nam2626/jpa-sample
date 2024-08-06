@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+도서 10000~20000원까지의 도서<br>
+내용 출력<br>
+<table>
+    <tr>
+        <th>ISBN</th>
+        <th>제목</th>
+        <th>저자</th>
+        <th>출판사</th>
+        <th>가격</th>
+    </tr>
+    <tr th:each="book : ${bookList}">
+        <td th:text="${book.isbn}"></td>
+        <td th:text="${book.bookName}"></td>
+        <td th:text="${book.author.authorName}"></td>
+        <td th:text="${book.publisher.publisherName}"></td>
+        <td th:text="${book.price}"></td>
+    </tr>
+</table>
+</body>
+</html>

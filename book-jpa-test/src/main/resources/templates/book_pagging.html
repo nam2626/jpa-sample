@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>도서관리 페이지</h2>
+<hr>
+<a href="/books">도서 목록</a>
+<a href="/books/price">10000~20000원 도서</a>
+<a href="/books/new">도서 등록</a>
+<a href="/authors">저자 목록</a>
+<a href="/publishers">출판사 목록</a>
+<hr>
+<h2>도서 목록</h2>
+<table border="1">
+    <tr>
+        <th>ISBN</th>
+        <th>제목</th>
+        <th>저자</th>
+        <th>출판사</th>
+        <th>가격</th>
+    </tr>
+    <tr th:each="book : ${bookList}">
+        <td th:text="${book.isbn}"></td>
+        <td th:text="${book.bookName}"></td>
+        <td th:text="${book.author.authorName}"></td>
+        <td th:text="${book.publisher.publisherName}"></td>
+        <td th:text="${book.price}"></td>
+    </tr>
+</table>
+<div>
+    <a th:if="${page > 1}" th:href="@{/books/list(page=${page-1})}">이전</a>
+    <span th:utext="${page}"></span>
+    <a th:if="${page < pageList.totalPages}" th:href="@{/books/list(page=${page+1})}">다음</a>
+</div>
+</body>
+</html>

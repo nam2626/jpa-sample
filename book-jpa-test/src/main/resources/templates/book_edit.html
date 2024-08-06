@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>도서정보 수정</title>
+</head>
+<body>
+<h2>도서정보 수정</h2>
+<hr>
+<form method="post" action="/books/{isbn}/edit">
+    <label for="isbn">ISBN</label>
+    <input type="text" id="isbn" name="isbn" th:value="${book.isbn}" required>
+    <br>
+    <label for="bookName">제목</label>
+    <input type="text" id="bookName" name="bookName" th:value="${book.bookName}" required>
+    <br>
+    <label for="author">저자</label>
+    <select id="author" name="author" required>
+        <option th:each="author : ${authors}"
+                th:value="${author.authorCode}"
+                th:text="${author.authorName}"
+                th:selected="${author.authorCode == book.author.authorCode}"
+        ></option>
+    </select>
+    <br>
+    <label for="publisher">출판사</label>
+    <select id="publisher" name="publisher" required>
+        <option th:each="publisher : ${publishers}"
+                th:value="${publisher.publisherCode}"
+                th:text="${publisher.publisherName}"
+                th:selected="${publisher.publisherCode == book.publisher.publisherCode}"></option>
+    </select>
+    <br>
+    <label for="price">가격</label>
+    <input type="number" id="price" name="price" th:value="${book.price}" required>
+    <br>
+    <button type="submit">수정</button>
+</form>
+</body>
+</html>

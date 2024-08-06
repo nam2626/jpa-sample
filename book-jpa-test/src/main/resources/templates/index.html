@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>도서관리 페이지</title>
+    <script>
+        window.onload = function () {
+            document.getElementById("btn_search").addEventListener("click", function () {
+                let search = document.getElementById("search").value;
+                fetch('/books/search?txt=' + search, { method: 'GET' })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        let result = document.querySelector(".result");
+                        result.innerHTML = "";
+                        data.forEach(function (book) {
+                            let tr = document.createElement("tr");
+                            let td1 = document.createElement("td");
+                            let td2 = document.createElement("td");
+                            let td3 = document.createElement("td");
+                            let td4 = document.createElement("td");
+                            let td5 = document.createElement("td");
+                            let td6 = document.createElement("td");
+                            let td7 = document.createElement("td");
+
+                            td1.innerText = book.isbn;
+                            td2.innerText = book.bookName;
+                            td3.innerText = book.author.authorName;
+                            td4.innerText = book.publisher.publisherName;
+                            td5.innerText = book.price;
+                            td6.innerHTML = '<a href="/books/' + book.isbn + '/edit">수정</a>';
+                            td7.innerHTML = '<a href="/books/' + book.isbn + '/delete">삭제</a>';
+
+                            tr.appendChild(td1);
+                            tr.appendChild(td2);
+                            tr.appendChild(td3);
+                            tr.appendChild(td4);
+                            tr.appendChild(td5);
+                            tr.appendChild(td6);
+                            tr.appendChild(td7);
+
+                            result.appendChild(tr);
+                        });
+
+                    });
+
+            });
+        }
+    </script>
+</head>
+<body>
+<h2>도서관리 페이지</h2>
+<hr>
+<a href="/books">도서 목록</a>
+<a href="/books/list">도서목록 페이징 처리</a>
+<a href="/books/price">10000~20000원 도서</a>
+<a href="/books/new">도서 등록</a>
+<a href="/authors">저자 목록</a>
+<a href="/publishers">출판사 목록</a>
+<hr>
+<h2>도서 목록</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th colspan="7">
+            <input type="text" id="search" placeholder="검색어">
+            <button type="button" id="btn_search">검색</button>
+        </th>
+    </tr>
+    <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>저자</th>
+        <th>출판사</th>
+        <th>가격</th>
+        <th>수정</th>
+        <th>삭제</th>
+    </tr>
+    </thead>
+    <tbody class="result">
+    <tr th:each="book : ${bookList}">
+        <td th:text="${book.isbn}"></td>
+        <td th:text="${book.bookName}"></td>
+        <td th:text="${book.author.authorName}"></td>
+        <td th:text="${book.publisher.publisherName}"></td>
+        <td th:text="${book.price}"></td>
+        <td><a th:href="@{/books/{id}/edit(id=${book.isbn})}">수정</a></td>
+        <td><a th:href="@{/books/{id}/delete(id=${book.isbn})}">삭제</a></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
